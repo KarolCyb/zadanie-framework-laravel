@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\models\User;
+use App\Models\People;
+use Illuminate\Http\Request;
 
 class PeopleController extends Controller
 {
-    public function index(){
+    public function index() {
 
-        $people = Person::all();
+        $people = People::all();
 
         return response()->json([
             'People: ' => $people,
@@ -17,33 +18,24 @@ class PeopleController extends Controller
 
     // Create:
 
-    public function store(Request $request) {   
-        $input = $request->validate([
-            'name' => ['required'],
-            'surname' => ['required'],
-            'phone' => ['required'],
-            'street' => ['required'],
-            'nationality' => ['required'],
-        ]);
+    public function create(Request $request)    {
 
-        $people = Person::create($input);
+        $people = new People();
+        $people->name = $request->name;
+        $people->surname = $request->surname;
+        $people->phone = $request->phone;
+        $people->street = $request->street;
+        $people->nationality = $request->nationality;
 
-        if ($people->save())   {
-            return response()->json([
-                'Message: ' => 'Success!',
-                'Person created: ' => $people
-        ], 200);
-        }   else    {
-            return response([
-                'Message: ' => 'We could not create a new person.',
-            ], 500);
+        $people->save();
+
+            return response()->json(['Person created.']);
         }
-    }
-
+    
     // Read:
 
-    public function show(string $id)    {
-        $people = Person::find($id);
+    public function read(string $id)    {
+        $people = People::find($id);
         if ($people)    {
             return response()->json([
                 'Message: ' => 'Person found.',
@@ -60,7 +52,7 @@ class PeopleController extends Controller
     // Update:
 
     public function update(Request $request, string $id)    {
-        $people = Person::find($id);
+        $people = People::find($id);
 
         if($people)    {
             $input = $request->validate([
@@ -91,24 +83,17 @@ class PeopleController extends Controller
         }
     }
 
-        //Delete: 
+    //Delete: 
 
     public function destroy(string $id) {
-            $people = Person::find($id);
+            $people = People::find($id);
 
-            if($people)    {
-                $people->delete();
+           
+                 $people->delete();
                 return response()->json([
                     'Message: ' => 'Person deleted with success.',
                 ], 200);
-            }
-            else    {
-                return response([
-                    'Message: ' => 'We could not find the person.',
-                ], 500);
-            }
+        
     }
 
 }
-
-
